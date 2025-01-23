@@ -26,7 +26,7 @@
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -16619,6 +16620,9 @@ EMULATION_VECTOR=$targ_emul_vector
+@@ -16609,6 +16610,9 @@ EMULATION_VECTOR=$targ_emul_vector
  
  
  
@@ -131,7 +131,7 @@
  #include "confdefs.h"
  
  #if HAVE_DLFCN_H
-@@ -19577,6 +19578,9 @@ fi
+@@ -19567,6 +19568,9 @@ fi
  ac_config_commands="$ac_config_commands default"
  
  

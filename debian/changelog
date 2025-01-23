@@ -1,6 +1,13 @@
+binutils (2.43.50.20241210-1) unstable; urgency=medium
+
+  * New upstream snapshot, taken from the trunk.
+  * Refresh patches.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 10 Dec 2024 09:55:31 +0100
+
 binutils (2.43.50.20241204-2) unstable; urgency=medium
 
-  * Unset ELF_PACKAGE_METADATA when running the tests.
+  * Unset ELF_PACKAGE_METADATA when doing profiled builds and running tests.
 
  -- Matthias Klose <doko@debian.org>  Wed, 04 Dec 2024 14:17:25 +0100
 

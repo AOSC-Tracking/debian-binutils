@@ -252,7 +252,7 @@ ifeq (,$(DEB_HOST_MULTIARCH))
   endif
 endif
 
-SHELL  = /bin/bash
+export SHELL  = /bin/bash
 
 gold_targets = \
 	amd64 arm64 armel armhf i386 \
