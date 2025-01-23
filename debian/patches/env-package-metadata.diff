@@ -1,0 +1,84 @@
+--- a/ld/ldelf.c
++++ b/ld/ldelf.c
+@@ -97,6 +97,18 @@ ldelf_after_parse (void)
+ 	einfo (_("%F%P: common page size (0x%v) > maximum page size (0x%v)\n"),
+ 	       link_info.commonpagesize, link_info.maxpagesize);
+     }
++
++  if (!ldelf_emit_note_fdo_package_metadata)
++    {
++      char *package_metadata = getenv("ELF_PACKAGE_METADATA");
++
++      if (package_metadata)
++	{
++	  ldelf_emit_note_fdo_package_metadata =
++	    xmalloc (strlen (package_metadata) + 1);
++	  strcpy (ldelf_emit_note_fdo_package_metadata, package_metadata);
++	}
++    }
+ }
+ 
+ /* Handle the generation of DT_NEEDED tags.  */
+--- a/gold/layout.cc
++++ b/gold/layout.cc
+@@ -3560,15 +3560,32 @@ Layout::create_build_id()
+ // If --package-metadata was used, set up the package metadata note.
+ // https://systemd.io/ELF_PACKAGE_METADATA/
+ 
++static const char*
++get_package_metadata()
++{
++  if (parameters->options().user_set_package_metadata())
++    {
++      const char* desc = parameters->options().package_metadata();
++      if (strcmp(desc, "") != 0)
++	return desc;
++    }
++
++  if (getenv("ELF_PACKAGE_METADATA"))
++    {
++      const char* desc = getenv("ELF_PACKAGE_METADATA");
++      if (strcmp(desc, "") != 0)
++	return desc;
++    }
++
++  return NULL;
++}
++
+ void
+ Layout::create_package_metadata()
+ {
+-  if (!parameters->options().user_set_package_metadata())
+-    return;
+-
+-  const char* desc = parameters->options().package_metadata();
+-  if (strcmp(desc, "") == 0)
+-    return;
++  const char* desc = get_package_metadata();
++  if (desc == NULL)
++     return;
+ 
+ #ifdef HAVE_JANSSON
+   json_error_t json_error;
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -2823,6 +2823,8 @@ do-check:
+ 	@: $(MAKE); $(unstage)
+ 	@r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
++	echo "Unset ELF_PACKAGE_METADATA for tests"; \
++	export -n ELF_PACKAGE_METADATA; \
+ 	$(MAKE) $(RECURSE_FLAGS_TO_PASS) check-host check-target
+ 
+ # Automated reporting of test results.
+--- a/Makefile.tpl
++++ b/Makefile.tpl
+@@ -1008,6 +1008,8 @@ do-check:
+ 	@: $(MAKE); $(unstage)
+ 	@r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
++	echo "Unset ELF_PACKAGE_METADATA for tests"; \
++	export -n ELF_PACKAGE_METADATA; \
+ 	$(MAKE) $(RECURSE_FLAGS_TO_PASS) check-host check-target
+ 
+ # Automated reporting of test results.

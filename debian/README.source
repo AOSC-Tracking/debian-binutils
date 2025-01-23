@@ -1,0 +1,16 @@
+This source package builds native packages and packages targeting
+debian architectures.  To shorten a test build, some of these builds
+can be skipped.
+
+DEB_BUILD_OPTIONS="parallel=<N> <option> ..." dpkg-buildpackage ...
+
+Where <option> can be:
+
+ - nomult to disable the binutils-multilib build
+ - nohppa to disable the hppa64 build
+ - nopgo to disable the PGO/LTO build
+ - nocheck to disable running the testsuite
+ - nocross to disable all builds for other targets
+
+To build only a subset of the target architectures, also
+set CROSS_ARCHS in the env, e.g. CROSS_ARCHS="arm64 ppc64el"

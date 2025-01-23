@@ -1,0 +1,11 @@
+--- a/gprofng/libcollector/Makefile.in
++++ b/gprofng/libcollector/Makefile.in
+@@ -441,7 +441,7 @@ CSOURCES = \
+ 	collector.c \
+ 	$(NULL)
+ 
+-AM_CFLAGS = $(GPROFNG_CFLAGS) $(GPROFNG_NO_NONNULL_COMPARE_CFLAGS)
++AM_CFLAGS = $(GPROFNG_CFLAGS) $(GPROFNG_NO_NONNULL_COMPARE_CFLAGS) -Wno-incompatible-pointer-types
+ AM_CPPFLAGS = $(GPROFNG_CPPFLAGS) -I.. -I$(srcdir) \
+ 	-I$(srcdir)/../common -I$(srcdir)/../src \
+ 	-I$(srcdir)/../../include

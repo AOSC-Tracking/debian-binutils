@@ -1,0 +1,38 @@
+Cross-binutils debian packages are directly built from the binutils
+source package together with the native binutils packages.
+
+To build a cross-binutils package which is not yet built:
+
+ o Download and unpack the binutils source package:
+
+    apt-get source binutils
+
+ o Ensure you have the binutils build-dependencies installed:
+
+    apt-get build-dep binutils
+
+ o Add the binutils-<your-target> package to the control file:
+
+    rm -f stamps/control
+    debian/rules stamps/control TARGET=<your-target>
+
+    This change is permanent and will survive 'make clean'.  If you
+    need to restore the original debian/control file:
+
+    rm -f stamps/control
+    debian/rules stamps/control TARGET=
+
+ o Then build the cross-binutils package:
+   
+    TARGET=<your-target> dpkg-buildpackage -b -uc -us 
+    or 
+    echo arm >debian/target; dpkg-buildpackage -b -uc -us
+
+   (substitute your target name, e.g. "arm" or "m68k", instead of
+    "<your-target>")
+
+--
+Hector Oron <zumbi@debian.org>
+Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Matthias Klose <doko@debian.org>
+Nikita Youshchenko <yoush@cs.msu.su>

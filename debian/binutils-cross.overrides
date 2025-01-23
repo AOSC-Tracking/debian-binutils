@@ -1,0 +1,18 @@
+@PKG@ binary: package-name-doesnt-match-sonames
+@PKG@ binary: non-standard-dir-in-usr
+
+# needed for kfreebsd and the hurd
+@PKG@ binary: file-in-unusual-dir
+
+# internal libs, with the target name encoded
+@PKG@ binary: no-shlibs-control-file
+
+# yes, intended
+@PKG@ binary: shlib-in-multi-arch-foreign-package
+@PKG@ binary: triplet-dir-and-architecture-mismatch
+
+# some triplets are long ...
+@PKG@ binary: extended-description-line-too-long
+
+# yes, libctf libs intended here
+@PKG@ binary: link-to-shared-library-in-wrong-package

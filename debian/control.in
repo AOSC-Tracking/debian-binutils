@@ -1,0 +1,277 @@
+Source: binutils
+Section: devel
+Priority: optional
+Maintainer: Matthias Klose <doko@debian.org>
+Uploaders: James Troup <binutils@elmo.tasta.io>
+Standards-Version: 4.7.0
+Build-Depends: autoconf (>= 2.64), @dpkg_dev@
+  bison, flex, gettext, texinfo, dejagnu, quilt, chrpath, dwz, debugedit (>= 4.16),
+  python3:any, file, xz-utils, lsb-release, zlib1g-dev, procps, help2man,
+  libjansson-dev, pkgconf, libzstd-dev,
+  default-jdk-headless [amd64 arm64 i386 riscv64 x32] <!pkg.binutils.nojava>,
+#  g++-aarch64-linux-gnu [amd64 i386 ppc64el s390x x32] <!nocheck>,
+#  g++-arm-linux-gnueabi [amd64 arm64 i386 x32] <!nocheck>,
+#  g++-arm-linux-gnueabihf [amd64 arm64 i386 ppc64el s390x x32] <!nocheck>,
+#  g++-powerpc64le-linux-gnu [amd64 arm64 i386 ppc64 s390x x32] <!nocheck>,
+#  g++-s390x-linux-gnu [amd64 arm64 i386 ppc64el x32] <!nocheck>,
+#  g++-alpha-linux-gnu [amd64 i386 x32] <!nocheck>,
+#  g++-hppa-linux-gnu [amd64 i386 x32] <!nocheck>,
+#  g++-m68k-linux-gnu [amd64 i386 x32] <!nocheck>,
+#  g++-powerpc-linux-gnu [amd64 i386 ppc64el s390x x32] <!nocheck>,
+#  g++-powerpc64-linux-gnu [amd64 i386 s390x x32] <!nocheck>,
+#  g++-riscv64-linux-gnu [amd64 arm64 i386 ppc64el s390x x32] <!nocheck>,
+#  g++-sh4-linux-gnu [amd64 i386 x32] <!nocheck>,
+#  g++-sparc64-linux-gnu [amd64 i386 x32] <!nocheck>,
+#  g++-i686-linux-gnu [amd64 arm64 ppc64el s390x x32] <!nocheck>,
+#  g++-x86-64-linux-gnu [arm64 i386 ppc64el s390x] <!nocheck>,
+#  g++-x86-64-linux-gnux32 [amd64 arm64 i386 ppc64el] <!nocheck>,
+Build-Conflicts: libelf-dev
+Rules-Requires-Root: no
+Homepage: https://www.gnu.org/software/binutils/
+Vcs-Browser: https://salsa.debian.org/toolchain-team/binutils
+Vcs-Git: https://salsa.debian.org/toolchain-team/binutils.git
+XS-Testsuite: autopkgtest
+
+Package: binutils-for-host
+Architecture: any
+Depends: ${binutils:native}:any (>= ${binutils:minver}),
+  binutils-common (= ${binary:Version}),
+Multi-Arch: same
+Description: GNU assembler, linker and binary utilities for the host architecture
+ The programs in this package are used to assemble, link and manipulate
+ binary and object files for the architecture of this package.  They may be
+ used in conjunction with a matching compiler and various libraries to build
+ programs. When using binutils through this metapackage, all tools must be
+ used with an architecture prefix.
+
+Package: binutils-for-build
+Architecture: all
+Depends: binutils (>= ${binutils:minver}),
+  binutils-common (>= ${binutils:minver})
+Multi-Arch: foreign
+Description: GNU assembler, linker and binary utilities for the build architecture
+ The programs in this package are used to assemble, link and manipulate
+ binary and object files for the native architecture.  They may be used in
+ conjunction with a build architecture compiler and various libraries to build
+ programs. When using binutils through this metapackage, tools without an
+ architecture prefix must be used.
+
+Package: binutils
+Architecture: any
+Depends: ${shlibs:Depends}, binutils-common (= ${binary:Version}),
+  libbinutils (= ${binary:Version}), ${binutils:native} (= ${binary:Version})
+Conflicts: modutils (<< 2.4.19-1), ${extraConflicts},
+  binutils-multiarch (<< 2.27-8)
+Provides: elf-binutils, ${gold:Provides}
+Suggests: binutils-doc (>= ${source:Version}), gprofng-gui
+Description: GNU assembler, linker and binary utilities
+ The programs in this package are used to assemble, link and manipulate
+ binary and object files.  They may be used in conjunction with a compiler
+ and various libraries to build programs.
+
+Package: libctf-nobfd0
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}
+Breaks: libbinutils (<< 2.33.50.20191128-1~)
+Replaces: libbinutils (<< 2.33.50.20191128-1~)
+Description: Compact C Type Format library (runtime, no BFD dependency)
+ This package includes the libctf-nobfd shared library.  The Compact C Type
+ Format (CTF) is a way of representing information about a binary program
+
+Package: libctf-nobfd0-dbg
+Section: debug
+Architecture: any
+Multi-Arch: same
+Depends: libctf-nobfd0 (= ${binary:Version})
+Description: Compact C Type Format library (debug symbols, no BFD dependency)
+ This package includes the libctf-nobfd shared library.  The Compact C Type
+ Format (CTF) is a way of representing information about a binary program
+
+Package: libctf0
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, libbinutils (= ${binary:Version})
+Description: Compact C Type Format library (runtime, BFD dependency)
+ This package includes the libctf shared library.  The Compact C Type
+ Format (CTF) is a way of representing information about a binary program
+
+Package: libctf0-dbg
+Section: debug
+Architecture: any
+Multi-Arch: same
+Depends: libctf0 (= ${binary:Version})
+Description: Compact C Type Format library (debug symbols, BFD dependency)
+ This package includes the libctf shared library.  The Compact C Type
+ Format (CTF) is a way of representing information about a binary program
+
+Package: libgprofng0
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, libbinutils (= ${binary:Version})
+Description: GNU Next Generation profiler (runtime library)
+ Gprofng is the GNU Next Generation profiler for analyzing the performance
+ of Linux applications.  Gprofng allows you to:
+ .
+  - Profile C / C++ / Java / Scala applications without needing to recompile
+  - Profile multi-threaded applications
+  - Analyze and compare multiple experiments
+  - Use time-based sampling and / or hardware event counters
+ .
+ This package includes the libgprofng shared library.
+
+Package: libgprofng0-dbg
+Section: debug
+Architecture: any
+Multi-Arch: same
+Depends: libgprofng0 (= ${binary:Version})
+Description: GNU Next Generation profiler (debug symbols)
+ Gprofng is the GNU Next Generation profiler for analyzing the performance
+ of Linux applications.
+ .
+ This package includes the debug symbols for the libgprofng shared library.
+
+Package: libsframe1
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}
+Description: Library to handle the SFrame format (runtime library)
+ SFrame stands for Simple Frame format.  SFrame format keeps track
+ of the minimal necessary information needed for generating stack traces.
+ .
+ This package includes the libsframe shared library.
+
+Package: libsframe1-dbg
+Section: debug
+Architecture: any
+Multi-Arch: same
+Depends: libsframe1 (= ${binary:Version})
+Description: Library to handle the SFrame format (debug symbols)
+ SFrame stands for Simple Frame format.  SFrame format keeps track
+ of the minimal necessary information needed for generating stack traces.
+ .
+ This package includes the debug symbols for the libsframe shared library.
+
+Package: libbinutils
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, binutils-common (= ${binary:Version})
+Breaks: binutils (<< 2.29-6)
+Replaces: binutils (<< 2.29-6)
+Description: GNU binary utilities (private shared library)
+ This package includes the private shared libraries libbfd and libopcodes.
+
+Package: libbinutils-dbg
+Section: debug
+Architecture: any
+Multi-Arch: same
+Depends: libbinutils (= ${binary:Version})
+Description: GNU binary utilities (private shared library, debug symbols)
+ This package provides debug symbols for libbinutils.
+
+Package: binutils-dev
+Architecture: any
+Priority: optional
+Depends: binutils (= ${binary:Version}), libbinutils (= ${binary:Version}),
+  libctf0 (= ${binary:Version}), libctf-nobfd0 (= ${binary:Version}),
+  libsframe1 (= ${binary:Version}),
+  libgprofng0 (= ${binary:Version}) [amd64 arm64 i386 riscv64 x32],
+Conflicts: libbfd-dev, binutils (<< 2.43.50.20240819)
+Provides: libbfd-dev
+Replaces: libbfd-dev, libc5-dev, binutils (<< 2.43.50.20240819)
+Description: GNU binary utilities (BFD development files)
+ This package includes header files and static libraries necessary to build
+ programs which use the GNU BFD library, which is part of binutils.  Note
+ that building Debian packages which depend on the shared libbfd is Not
+ Allowed.
+
+Package: binutils-multiarch
+Architecture: any
+Priority: optional
+Depends: ${shlibs:Depends}, binutils (= ${binary:Version}),
+  binutils-common (= ${binary:Version})
+Description: Binary utilities that support multi-arch targets
+ The programs in this package are used to manipulate binary and object
+ files that may have been created on other architectures.  This package
+ is primarily for multi-architecture developers and cross-compilers and
+ is not needed by normal users or developers.  Note that a cross-assembling
+ version of gas is not included in this package, just the binary utilities.
+ .
+ NORMAL USERS SHOULD NOT INSTALL THIS PACKAGE.  It's meant only for those
+ requiring support for reading info from binaries from other architectures.
+
+Package: binutils-multiarch-dbg
+Section: debug
+Architecture: any
+Priority: optional
+Depends: binutils-multiarch (= ${binary:Version})
+Description: Binary utilities that support multi-arch targets (debug symbols)
+ This package provides debug symbols for binutils-multiarch.
+
+Package: binutils-multiarch-dev
+Architecture: any
+Priority: optional
+Depends: ${shlibs:Depends},
+ binutils-dev (= ${binary:Version}), binutils-multiarch (= ${binary:Version})
+Replaces: binutils-multiarch (<< 2.24-5)
+Description: GNU binary utilities that support multi-arch targets (BFD development files)
+ This package includes header files, static and shared libraries necessary
+ to build programs which use the GNU BFD library for multi-arch targets,
+ which is part of binutils. Note that building Debian packages which depend
+ on the shared libbfd is Not Allowed.
+ .
+ NORMAL USERS SHOULD NOT INSTALL THIS PACKAGE.  It's meant only for those
+ requiring support for reading info from binaries from other architectures.
+
+Package: binutils-hppa64-linux-gnu
+Architecture: amd64 i386 x32 hppa
+Depends: ${shlibs:Depends}, binutils (= ${binary:Version}),
+  binutils-common (= ${binary:Version})
+Recommends: libc6-dev
+Provides: binutils-hppa64
+Suggests: binutils-doc (>= ${source:Version})
+Breaks: binutils-hppa64 (<< 2.25.1-2)
+Replaces: binutils-hppa64 (<< 2.25.1-2)
+Description: GNU assembler, linker and binary utilities targeted for hppa64-linux
+ The programs in this package are used to assemble, link and manipulate
+ binary and object files.  They may be used in conjunction with a compiler
+ and various libraries to build programs.
+ .
+ This package is needed to build an 64-bit kernel for 64-bit hppa machines.
+
+Package: binutils-hppa64-linux-gnu-dbg
+Section: debug
+Architecture: amd64 i386 x32 hppa
+Depends: binutils-hppa64-linux-gnu (= ${binary:Version})
+Description: GNU binutils targeted for hppa64-linux (debug symbols)
+ This package provides debug symbols for binutils-hppa64-linux-gnu.
+
+Package: binutils-doc
+Section: doc
+Architecture: all
+Multi-Arch: foreign
+Priority: optional
+Suggests: binutils (= ${binary:Version})
+Description: Documentation for the GNU assembler, linker and binary utilities
+ This package consists of the documentation for the GNU assembler,
+ linker and binary utilities in info format.
+
+Package: binutils-source
+Architecture: all
+Multi-Arch: foreign
+Priority: optional
+Depends: texinfo, zlib1g-dev, make, python3,
+  libjansson-dev, pkgconf, libzstd-dev,
+Description: GNU assembler, linker and binary utilities (source)
+ This package contains the sources and patches which are needed to
+ build binutils.
+
+Package: binutils-common
+Architecture: any
+Multi-Arch: same
+Breaks: binutils (<< 2.38.50.20220527-2), binutils-multiarch (<< 2.38.50.20220527-2)
+Replaces: binutils (<< 2.38.50.20220527-2), binutils-multiarch (<< 2.38.50.20220527-2)
+Description: Common files for the GNU assembler, linker and binary utilities
+ This package contains the localization files used by binutils packages for
+ various target architectures and parts of the binutils documentation. It is
+ not useful on its own.

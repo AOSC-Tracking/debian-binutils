@@ -1,0 +1,4 @@
+# DP: Don't bump the version when doing distro builds
+
+git diff 02e488d0c7d5f3559fb78022dfb5f3c9eb678ff2 57f3676f3e5266829a91880d61143ab9ecd617bd 
+

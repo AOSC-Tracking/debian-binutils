@@ -1,0 +1,5 @@
+libctf-nobfd.so.0 libctf-nobfd0 #MINVER#
+ (symver)LIBCTF_1.0 2.34
+ (symver)LIBCTF_1.1 2.36
+ (symver)LIBCTF_1.2 2.37
+ (symver)LIBCTF_1.3 2.42.90

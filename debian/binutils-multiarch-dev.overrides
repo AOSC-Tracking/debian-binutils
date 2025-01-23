@@ -1,0 +1,2 @@
+# package only has symlinks
+binutils-multiarch-dev binary: control-file-is-empty md5sums

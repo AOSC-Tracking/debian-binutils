@@ -1,0 +1,10 @@
+# don't warn about missing man pages for diverted binaries
+binutils-hppa64-linux-gnu binary: binary-without-manpage
+
+# the API of the shared libs is not public, don't care about the name
+binutils-hppa64-linux-gnu binary: package-name-doesnt-match-sonames
+
+binutils-hppa64-linux-gnu binary: non-standard-dir-in-usr
+
+# private library. no -dev package is provided, nothing can link it
+binutils-hppa64-linux-gnu binary: no-shlibs-control-file

@@ -1,0 +1,13 @@
+# don't warn about missing man pages for diverted binaries
+binutils-multiarch binary: binary-without-manpage
+
+# the API of the shared libs is not public, don't care about the name
+binutils-multiarch binary: package-name-doesnt-match-sonames
+
+# the upstream name, we don't care
+binutils-multiarch binary: dev-pkg-without-shlib-symlink
+
+# not in binutils-multiarch, just move these away
+binutils-multiarch: diversion-for-unknown-file usr/lib/libopcodes.a preinst:19
+binutils-multiarch: diversion-for-unknown-file usr/lib/libbfd.a preinst:16
+

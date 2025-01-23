@@ -1,0 +1,4 @@
+libbfd @VER@-multiarch@DATE_EXT@ binutils-multiarch (>= @DEB_UVER@), binutils-multiarch (<< @DEB_NVER@)
+libopcodes @VER@-multiarch@DATE_EXT@ binutils-multiarch (>= @DEB_UVER@), binutils-multiarch (<< @DEB_NVER@)
+libctf-multiarch 0 binutils-multiarch (>= @DEB_UVER@)
+libctf-nobfd-multiarch 0 binutils-multiarch (>= @DEB_UVER@)

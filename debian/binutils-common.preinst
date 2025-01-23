@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "upgrade" ]; then
+    if [ -f /etc/gprofng.rc ] && dpkg --compare-versions "$2" lt "2.39-8ubuntu1"; then
+        if [ "$(md5sum /etc/gprofng.rc | awk '{print $1}')" = "7750fca2f4e81015abe079c379c79fed" ]; then
+            rm /etc/gprofng.rc
+        fi
+    fi
+fi
+
+#DEBHELPER#

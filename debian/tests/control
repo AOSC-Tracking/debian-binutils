@@ -1,0 +1,19 @@
+Tests: build
+# this doesn't work well, without building -hppa, -multiarch and -cross packages
+#Depends: build-essential
+#Restrictions: build-needed
+Depends: build-essential,
+  fakeroot,
+  autoconf (>= 2.64),
+  bison, flex, gettext, texinfo, dejagnu, quilt, chrpath, dwz, debugedit (>= 4.16),
+  python3:any, file, xz-utils, lsb-release, zlib1g-dev, procps, libstdc++-dev,
+  libjansson-dev, pkg-config,
+  default-jdk-headless [amd64 arm64 i386 riscv64 x32],
+# build process emits warnings on stderr
+Restrictions: allow-stderr
+
+Tests: libc-link
+Depends: build-essential
+
+Tests: shlib-build
+Depends: build-essential

@@ -1,0 +1,28 @@
+
+Package: binutils-@target@
+Priority: optional
+Architecture: @host_archs@
+Multi-Arch: allowed
+Depends: binutils-common (= ${binary:Version}),
+  ${shlibs:Depends}, ${extraDepends}
+Suggests: binutils-doc (= ${source:Version})
+Provides: @binutils_alt_triplet@
+Breaks: binutils (<< 2.29-6), binutils-dev (<< 2.38.50.20220609-2)
+Replaces: binutils (<< 2.29-6), binutils-dev (<< 2.38.50.20220609-2)
+Built-Using: ${Built-Using}
+Description: GNU binary utilities, for @target@ target
+ This package provides GNU assembler, linker and binary utilities
+ for the @target@ target.
+ .
+ You don't need this package unless you plan to cross-compile programs
+ for @target@ and @target@ is not your native
+ platform.
+
+Package: binutils-@target@-dbg
+Section: debug
+Priority: optional
+Architecture: @host_archs@
+Multi-Arch: foreign
+Depends: binutils-@target@ (= ${binary:Version})
+Description: GNU binary utilities, for @target@ target (debug symbols)
+ This package provides debug symbols for binutils-@target@.

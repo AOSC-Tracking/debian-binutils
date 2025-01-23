@@ -1,0 +1,188 @@
+# these macros are also used for binutils & gcc combined builds
+# these must not conflict with definitions in the gcc packaging
+
+# GCC must use: BINUTILS_GCCCONF BINUTILS_GCCENV
+
+# macros that have to be defined before inclusion:
+# DEB_HOST_ARCH, BASE_VERSION (GCC)
+
+# only used in the GCC sources
+bd_binutils_only = file, help2man, libjansson-dev,
+
+# Map a Debian architecture alias to a GNU type or a multiarch path component.
+run_dpkg_arch = $(or $(dpkg_arch_$1),$(eval \
+  dpkg_arch_$1 := $(shell dpkg-architecture -f -a$1))$(dpkg_arch_$1))
+_gnu_type  = $(call vafilt,$(run_dpkg_arch),DEB_HOST_GNU_TYPE)
+_multiarch = $(call vafilt,$(run_dpkg_arch),DEB_HOST_MULTIARCH)
+
+ifneq (,$(filter $(DEB_HOST_ARCH),amd64 i386 arm64 x32 riscv64))
+  with_gprofng = yes
+  CONF_GPROFNG = --enable-gprofng
+  ifeq (,$(findstring pkg.binutils.nojava, $(DEB_BUILD_PROFILES)))
+    CONF_GPROFNG += --with-jdk=/usr/lib/jvm/default-java
+  endif
+endif
+
+gold_targets = \
+	amd64 arm64 armel armhf i386 \
+	powerpc ppc64 ppc64el sparc sparc64 s390x \
+	x32 hurd-amd64 hurd-i386
+
+ifneq (,$(filter $(DEB_HOST_ARCH), $(gold_targets)))
+  with_gold = yes
+endif
+
+binutils_programs = addr2line ar as c++filt elfedit gprof ld ld.bfd
+binutils_programs += nm objcopy objdump ranlib readelf size strings strip
+ifeq ($(with_gprofng),yes)
+  binutils_programs += gprofng gprofng-collect-app gprofng-archive
+  binutils_programs += gprofng-display-html gprofng-display-src gprofng-display-text
+endif
+ifeq ($(with_gold),yes)
+  binutils_programs += gold ld.gold dwp
+endif
+
+BINUTILS_BASECONF = \
+	--disable-silent-rules \
+	--enable-obsolete \
+	--enable-plugins \
+	--enable-threads \
+	--enable-jansson \
+	--enable-default-hash-style=gnu \
+	--enable-deterministic-archives \
+	--disable-compressed-debug-sections \
+	--enable-new-dtags \
+	--disable-x86-used-note \
+	--with-gold-ldflags=-static-libstdc++
+
+DEB_TARGET_MULTIARCH32_amd64		= i386-linux-gnu
+DEB_TARGET_MULTIARCHX32_amd64		= x86_64-linux-gnux32
+
+DEB_TARGET_MULTIARCH32_x32		= i386-linux-gnu
+DEB_TARGET_MULTIARCH64_x32		= x86_64-linux-gnu
+
+DEB_TARGET_MULTIARCH32_powerpc		= powerpc-linux-gnu
+
+DEB_TARGET_MULTIARCH32_s390x		= s390-linux-gnu
+
+DEB_TARGET_MULTIARCH32_sparc64		= sparc-linux-gnu
+
+DEB_TARGET_MULTIARCH64_i386		= x86_64-linux-gnu
+DEB_TARGET_MULTIARCHX32_i386		= x86_64-linux-gnux32
+
+DEB_TARGET_MULTIARCH64_powerpc		= powerpc64-linux-gnu
+
+DEB_TARGET_MULTIARCH64_sparc		= sparc64-linux-gnu
+
+DEB_TARGET_MULTIARCH64_s390		= s390x-linux-gnu
+
+DEB_TARGET_MULTIARCH64_mips		= mips64-linux-gnuabi64
+DEB_TARGET_MULTIARCHN32_mips		= mips64-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH64_mipsel		= mips64el-linux-gnuabi64
+DEB_TARGET_MULTIARCHN32_mipsel		= mips64el-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH64_mipsn32		= mips64-linux-gnuabi64
+DEB_TARGET_MULTIARCH32_mipsn32		= mips-linux-gnu
+
+DEB_TARGET_MULTIARCH64_mipsn32el 	= mips64el-linux-gnuabi64
+DEB_TARGET_MULTIARCH32_mipsn32el 	= mipsel-linux-gnu
+
+DEB_TARGET_MULTIARCH32_mips64		= mips-linux-gnu
+DEB_TARGET_MULTIARCHN32_mips64		= mips64-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH32_mips64el		= mipsel-linux-gnu
+DEB_TARGET_MULTIARCHN32_mips64el	= mips64el-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH64_mipsr6		= mipsisa64r6-linux-gnuabi64
+DEB_TARGET_MULTIARCHN32_mipsr6	= mipsisa64r6-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH64_mipsr6el	= mipsisa64r6el-linux-gnuabi64
+DEB_TARGET_MULTIARCHN32_mipsr6el	= mipsisa64r6el-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH64_mipsn32r6	= mipsisa64r6-linux-gnuabi64
+DEB_TARGET_MULTIARCH32_mipsn32r6	= mipsisa32r6-linux-gnu
+
+DEB_TARGET_MULTIARCH64_mipsn32r6el 	= mipsisa64r6el-linux-gnuabi64
+DEB_TARGET_MULTIARCH32_mipsn32r6el 	= mipsisa32r6el-linux-gnu
+
+DEB_TARGET_MULTIARCH32_mips64r6		= mipsisa32r6-linux-gnu
+DEB_TARGET_MULTIARCHN32_mips64r6	= mipsisa64r6-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH32_mips64r6el	= mipsisa32r6el-linux-gnu
+DEB_TARGET_MULTIARCHN32_mips64r6el	= mipsisa64r6el-linux-gnuabin32
+
+DEB_TARGET_MULTIARCH32_arm64		= aarch64_ilp32-linux-gnu
+
+SET_BINUTILS_MULTIARCH_ENV = \
+	DEB_TARGET_MULTIARCH=$(call _multiarch,$1) \
+	$(if $(DEB_TARGET_MULTIARCH32_$1) ,DEB_TARGET_MULTIARCH32=$(DEB_TARGET_MULTIARCH32_$1)) \
+	$(if $(DEB_TARGET_MULTIARCH64_$1) ,DEB_TARGET_MULTIARCH64=$(DEB_TARGET_MULTIARCH64_$1)) \
+	$(if $(DEB_TARGET_MULTIARCHX32_$1),DEB_TARGET_MULTIARCHX32=$(DEB_TARGET_MULTIARCHX32_$1)) \
+	$(if $(DEB_TARGET_MULTIARCHN32_$1),DEB_TARGET_MULTIARCHN32=$(DEB_TARGET_MULTIARCHN32_$1))
+
+CONFARGS_TARGET_sparc		= --enable-targets=sparc64-linux-gnu
+CONFLICTS_TARGET_sparc		= -VextraConflicts="libc6-dev-sparc64 (<< 2.2.5-7)"
+
+CONFARGS_TARGET_sparc64		= --enable-targets=sparc-linux-gnu
+CONFLICTS_TARGET_sparc64	= -VextraConflicts="libc6-dev-sparc64 (<< 2.2.5-7)"
+
+CONFARGS_TARGET_powerpc		= --enable-targets=powerpc64-linux-gnu
+
+CONFARGS_TARGET_ppc64		= --enable-targets=powerpc-linux-gnu
+
+CONFARGS_TARGET_ppc64el		= --enable-targets=powerpc-linux-gnu
+
+CONFARGS_TARGET_s390		= --enable-targets=s390x-linux-gnu
+
+CONFARGS_TARGET_s390x		= --enable-targets=s390-linux-gnu
+
+CONFARGS_TARGET_amd64		= --enable-targets=i686-linux-gnu,x86_64-linux-gnux32,x86_64-pep
+
+CONFARGS_TARGET_i386		= --enable-targets=x86_64-linux-gnu,x86_64-linux-gnux32,x86_64-pep
+
+CONFARGS_TARGET_x32		= --enable-targets=i686-linux-gnu,x86_64-linux-gnu,x86_64-pep
+
+CONFLICTS_TARGET_amd64		= -VextraConflicts="binutils-mingw-w64-i686 (<< 2.23.52.20130612-1+3), binutils-mingw-w64-x86-64 (<< 2.23.52.20130612-1+3)"
+CONFLICTS_TARGET_i386 = $(CONFLICTS_TARGET_amd64)
+CONFLICTS_TARGET_x32  = $(CONFLICTS_TARGET_amd64)
+
+CONFARGS_TARGET_riscv64		= --with-isa-spec=2.2
+
+CONFARGS_TARGET_mips		= --enable-targets=mips64-linux-gnuabi64,mips64-linux-gnuabin32
+
+CONFARGS_TARGET_mipsel		= --enable-targets=mips64el-linux-gnuabi64,mips64el-linux-gnuabin32 --enable-mips-fix-loongson3-llsc=yes
+
+CONFARGS_TARGET_mipsn32		= --enable-targets=mips64-linux-gnuabi64,mips-linux-gnu
+
+CONFARGS_TARGET_mipsn32el	= --enable-targets=mips64el-linux-gnuabi64,mipsel-linux-gnu --enable-mips-fix-loongson3-llsc=yes
+
+CONFARGS_TARGET_mips64		= --enable-targets=mips64-linux-gnuabin32,mips-linux-gnu
+
+CONFARGS_TARGET_mips64el	= --enable-targets=mips64el-linux-gnuabin32,mipsel-linux-gnu --enable-mips-fix-loongson3-llsc=yes
+
+CONFARGS_TARGET_mipsr6	= --enable-targets=mipsisa64r6-linux-gnuabi64,mipsisa64r6-linux-gnuabin32
+
+CONFARGS_TARGET_mipsr6el	= --enable-targets=mipsisa64r6el-linux-gnuabi64,mipsisa64r6el-linux-gnuabin32
+
+CONFARGS_TARGET_mipsn32r6	= --enable-targets=mipsisa64r6-linux-gnuabi64,mipsisa32r6-linux-gnu
+
+CONFARGS_TARGET_mipsn32r6el	= --enable-targets=mipsisa64r6el-linux-gnuabi64,mipsisa32r6el-linux-gnu
+
+CONFARGS_TARGET_mips64r6	= --enable-targets=mipsisa64r6-linux-gnuabin32,mipsisa32r6-linux-gnu
+
+CONFARGS_TARGET_mips64r6el	= --enable-targets=mipsisa64r6el-linux-gnuabin32,mipsisa32r6el-linux-gnu
+
+CONFARGS_TARGET_aarch64		= --enable-targets=aarch64_be-linux-gnu
+
+CONFARGS_TARGET_arc		= --with-cpu=hs38_linux
+
+CONFARGS_TARGET_hppa		= --enable-targets=hppa64-linux-gnu
+
+BINUTILS_GCCCONF = $(BINUTILS_BASECONF) $(CONFARGS_TARGET_$(DEB_HOST_ARCH))
+ifeq ($(with_gold),yes)
+  BINUTILS_GCCCONF += --enable-ld=default --enable-gold
+endif
+BINUTILS_GCCCONF += $(CONF_GPROFNG)
+
+BINUTILS_GCCENV = BFD_SOVER_EXT=-tc$(BASE_VERSION) CTF_SOVER_EXT=-tc$(BASE_VERSION)
